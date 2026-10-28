@@ -1,0 +1,354 @@
+<title>rossrants</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
+<style>
+/* Layout: one phone, centered and scaled to the window on desktop; full-bleed app on a real phone. Single dark look for projectors. */
+:root{
+  --stage:#0A0C12; --stage-glow:#151A26;
+  --bg:#10131C; --surface:#1A1F2B; --line:#2E3546; --line-soft:#252B39;
+  --fg:#F2EFE8; --fg-2:#D5D8E0; --muted:#A3A9B8; --idle:#6E7586;
+  --accent:#F5B83D; --down:#8FB2FF; --on-accent:#10131C;
+  --ch-club:#D9A6FF; --ch-job:#7FD6B5; --ch-classes:#FFA37F;
+  --display:'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  --body:'DM Sans', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--stage);color:var(--fg);font-family:var(--body);overflow:hidden}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.stage{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  padding-block:24px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  background:radial-gradient(ellipse at 50% 40%, var(--stage-glow), var(--stage) 70%)}
+.fit{position:relative;flex:0 0 auto}
+.device{position:absolute;top:0;left:0;width:414px;height:868px;padding:12px;border-radius:56px;background:#05060A;
+  box-shadow:0 0 0 1.5px #2A3040, 0 40px 120px rgba(0,0,0,.6);transform-origin:top left}
+.screen{position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:var(--bg)}
+.notch{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#05060A;z-index:5}
+.below{display:flex;align-items:center;gap:16px;color:var(--muted);font-size:13px}
+.below button{background:transparent;border:1px solid var(--line);border-radius:999px;height:36px;padding:0 14px;color:var(--fg-2);font-weight:600}
+.below button:hover{border-color:var(--muted)}
+
+/* Real phone: drop the frame, app fills the screen */
+@media (max-width:520px){
+  .stage{padding:0;gap:0;background:var(--bg)}
+  .fit{width:100%!important;height:100%!important}
+  .device{position:static;width:100%;height:100%;padding:0;border-radius:0;box-shadow:none;transform:none!important;background:var(--bg)}
+  .screen{width:100%;height:100%;border-radius:0}
+  .notch,.below{display:none}
+  .app{--top:16px}
+}
+
+.app{--top:58px;position:absolute;inset:0;display:flex;flex-direction:column}
+.view{display:flex;flex-direction:column;height:100%;min-height:0}
+.band{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+
+header.top{padding-top:var(--top);padding-bottom:12px;display:flex;flex-direction:column;gap:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand h1{margin:0;font-family:var(--display);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1}
+.brand h1 span{color:var(--accent)}
+.brand p{margin:3px 0 0;font-size:13px;color:var(--muted)}
+.seg{display:flex;background:var(--surface);border-radius:999px;padding:4px;gap:2px}
+.seg button{border:0;border-radius:999px;height:36px;padding:0 14px;font-size:13px;font-weight:700;background:transparent;color:var(--fg-2)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * max(16px, env(safe-area-inset-left, 0px)));padding:0 max(16px, env(safe-area-inset-left, 0px))}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;height:38px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:transparent;color:var(--fg-2);font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.chip .dot{width:8px;height:8px;border-radius:50%}
+.chip[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--on-accent)}
+
+main.feed{flex:1 1 auto;min-height:0;overflow-y:auto;padding-top:4px;padding-bottom:120px;display:flex;flex-direction:column;gap:10px;scrollbar-width:none}
+main.feed::-webkit-scrollbar{display:none}
+.post{background:var(--surface);border-radius:20px;padding:16px 8px 12px 16px;display:flex;gap:6px}
+.post .content{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:10px}
+.meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.meta .who{font-weight:600;color:var(--fg-2)}
+.av{width:22px;height:22px;border-radius:50%;flex:0 0 auto}
+.post p{margin:0;font-size:16px;line-height:1.45;overflow-wrap:anywhere}
+.foot{display:flex;align-items:center;gap:10px}
+.tag{font-size:12px;font-weight:700;border:1px solid currentColor;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.replies{border:0;background:transparent;color:var(--muted);font-size:13px;font-weight:600;height:44px;padding:0 6px;display:flex;align-items:center;gap:6px}
+.replies:hover{color:var(--fg)}
+.vote{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto}
+.vote button{border:0;background:transparent;width:44px;height:40px;color:var(--idle);display:flex;align-items:center;justify-content:center}
+.vote button.on-up{color:var(--accent)}
+.vote button.on-down{color:var(--down)}
+.score{font-family:var(--display);font-weight:800;font-size:17px;font-variant-numeric:tabular-nums}
+.score.up{color:var(--accent)} .score.down{color:var(--down)}
+.empty{padding:40px 8px;text-align:center;color:var(--muted);font-size:15px}
+
+.fab{position:absolute;right:max(20px, calc(env(safe-area-inset-right, 0px) + 12px));bottom:calc(32px + env(safe-area-inset-bottom, 0px));height:58px;padding:0 22px 0 18px;border:0;border-radius:999px;background:var(--accent);color:var(--on-accent);font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.fab:active{transform:scale(.97)}
+
+header.thread{padding-top:calc(var(--top) - 6px);padding-bottom:8px;display:flex;align-items:center;gap:4px;padding-left:max(4px, env(safe-area-inset-left, 0px))}
+.back{border:0;background:transparent;width:44px;height:44px;display:flex;align-items:center;justify-content:center}
+header.thread .t{font-weight:700;font-size:16px}
+header.thread .tag{margin-left:auto}
+main.thread{flex:1 1 auto;min-height:0;overflow-y:auto;padding-top:4px;padding-bottom:24px;display:flex;flex-direction:column;gap:14px;scrollbar-width:none}
+.op{background:var(--surface);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.op p{margin:0;font-size:19px;line-height:1.45;overflow-wrap:anywhere}
+.op .pts{margin-left:auto;font-family:var(--display);font-weight:800;font-size:16px}
+.label{font-size:13px;font-weight:700;color:var(--muted);padding:0 4px}
+.reply{display:flex;gap:10px;padding:0 4px}
+.reply .av{width:26px;height:26px;margin-top:2px}
+.reply p{margin:4px 0 0;font-size:15px;line-height:1.45;overflow-wrap:anywhere}
+form.replybar{padding-top:12px;padding-bottom:calc(28px + env(safe-area-inset-bottom, 0px));border-top:1px solid var(--line-soft);display:flex;gap:10px;align-items:center}
+.field{flex:1 1 auto;min-width:0;height:46px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);padding:0 16px;font:inherit;font-size:15px}
+.send{width:46px;height:46px;border-radius:50%;border:0;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+
+.sheet{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;z-index:10}
+.scrim{position:absolute;inset:0;border:0;padding:0;background:rgba(6,8,13,.72);animation:fade .18s ease-out}
+.sheet form{position:relative;background:var(--surface);border-radius:28px 28px 0 0;padding-top:14px;padding-bottom:calc(28px + env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;gap:14px;animation:rise .24s cubic-bezier(.2,.8,.2,1)}
+.grab{width:40px;height:5px;border-radius:3px;background:#3A4256;align-self:center}
+.sheet h2{margin:0;font-family:var(--display);font-weight:800;font-size:24px}
+.ghost{border:0;background:transparent;color:var(--muted);font-size:15px;font-weight:600;height:44px;padding:0 4px}
+.sheet fieldset{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.sheet legend{font-size:13px;font-weight:700;color:var(--muted);padding:0;margin-bottom:8px}
+.pick{height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:transparent;color:var(--fg-2);font-size:14px;font-weight:600}
+.sheet label.lbl{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:-6px}
+textarea{resize:none;border-radius:16px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);padding:14px 16px;font:inherit;font-size:16px;line-height:1.45}
+.post-btn{flex:0 0 auto;height:48px;padding:0 24px;border:0;border-radius:999px;background:var(--accent);color:var(--on-accent);font-size:16px;font-weight:700}
+.post-btn:disabled{background:#5A6070;cursor:default}
+.hint{font-size:12px;color:var(--muted);line-height:1.4}
+@keyframes rise{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.sheet form,.scrim{animation:none}}
+</style>
+
+<div class="stage">
+  <div class="fit" id="fit">
+    <div class="device" id="device">
+      <div class="screen">
+        <div class="notch" aria-hidden="true"></div>
+        <div class="app" id="app" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+  <div class="below">
+    <span>Prototype · anonymous feed for Ross BBA students</span>
+    <button type="button" id="reset">Reset demo</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var CH = {
+    club:{label:'Club recruiting', color:'var(--ch-club)'},
+    job:{label:'Job recruiting', color:'var(--ch-job)'},
+    classes:{label:'Classes', color:'var(--ch-classes)'}
+  };
+  var AV = ['#D9A6FF','#7FD6B5','#FFA37F','#9CB8FF','#F5B83D'];
+  var MIN = 60000;
+
+  function seed(){
+    var now = Date.now();
+    function ago(m){ return now - m*MIN; }
+    // ===== EDIT THE SAMPLE CONTENT BELOW =====
+    // posts: ch = 'club' | 'job' | 'classes'; av = avatar color 0-4; score = starting upvotes; ago(N) = posted N minutes ago
+    // replies: keyed by post id
+    return {
+      channel:'all', sort:'hot', view:'feed', openId:null, composing:false,
+      draft:'', draftChannel:'club', replyDraft:'', votes:{}, nextId:100,
+      posts:[
+        {id:1, ch:'club', handle:'Anon Consultant', av:0, text:'Got rejected from 3 consulting clubs in one night. Applied to 7. Who even decides this??', score:214, ts:ago(95)},
+        {id:2, ch:'job', handle:'Anon Banker', av:1, text:'Superday next week and I still can’t walk through a DCF without my voice shaking. How do people make it sound casual?', score:167, ts:ago(40)},
+        {id:3, ch:'classes', handle:'Anon Accountant', av:2, text:'In a BCOM 350 group project where one teammate has replied "sounds good!" to every message but has done literally nothing else.', score:301, ts:ago(300)},
+        {id:4, ch:'classes', handle:'Anon Quant', av:1, text:'FIN 300 problem set took me 4 hours and I’m pretty sure 4 of the answers are still wrong.', score:76, ts:ago(25)},
+        {id:5, ch:'job', handle:'Anon Marketer', av:0, text:'Everyone in my section seems to have a summer offer already and I’m still cold-emailing alumni like it’s August.', score:143, ts:ago(520)},
+        {id:6, ch:'club', handle:'Anon Founder', av:2, text:'Is it normal that joining a club feels harder than applying for an actual job?', score:95, ts:ago(7)}
+      ],
+      replies:{
+        1:[
+          {handle:'Anon Strategist', av:3, text:'We should start a club for people rejected by clubs.', ts:ago(80)},
+          {handle:'Anon Senior', av:1, text:'Got cut from 5 my first round. Ended up somewhere I liked way more. It evens out just trust the process.', ts:ago(60)},
+          {handle:'Anon Consultant', av:0, text:'appreciate this fr', ts:ago(52)}
+        ],
+        2:[
+          {handle:'Anon Senior', av:4, text:'Make sure u know the concepts. Then say it out loud to a wall 20 times.', ts:ago(30)},
+          {handle:'Anon Banker', av:1, text:'the wall is going to know more about unlevered FCF than me', ts:ago(22)}
+        ],
+        3:[
+          {handle:'Anon Sophomore', av:2, text:'Peer evals exist for this exact person. Use them.', ts:ago(200)}
+        ]
+      }
+    };
+  }
+
+  var S = seed();
+  var app = document.getElementById('app');
+
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function ago(ts){
+    var m = Math.floor((Date.now()-ts)/MIN);
+    if (m < 1) return 'now';
+    if (m < 60) return m+'m';
+    if (m < 1440) return Math.floor(m/60)+'h';
+    return Math.floor(m/1440)+'d';
+  }
+  function score(p){ return p.score + (S.votes[p.id]||0); }
+  function replyLabel(id){ var n=(S.replies[id]||[]).length; return n===0?'Reply':(n===1?'1 reply':n+' replies'); }
+
+  var I = {
+    up:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>',
+    down:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>',
+    bubble:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>',
+    plus:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+    back:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>',
+    send:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+  };
+
+  function postCard(p){
+    var v = S.votes[p.id]||0, sc = score(p);
+    return '<article class="post">'+
+      '<div class="content">'+
+        '<div class="meta"><span class="av" style="background:'+AV[p.av]+'"></span><span class="who">'+esc(p.handle)+'</span><span>· '+ago(p.ts)+'</span></div>'+
+        '<p>'+esc(p.text)+'</p>'+
+        '<div class="foot"><span class="tag" style="color:'+CH[p.ch].color+'">'+CH[p.ch].label+'</span>'+
+          '<button type="button" class="replies" data-act="open" data-id="'+p.id+'">'+I.bubble+replyLabel(p.id)+'</button></div>'+
+      '</div>'+
+      '<div class="vote">'+
+        '<button type="button" aria-label="Upvote" aria-pressed="'+(v===1)+'" class="'+(v===1?'on-up':'')+'" data-act="up" data-id="'+p.id+'">'+I.up+'</button>'+
+        '<span class="score '+(v===1?'up':'')+'">'+sc+'</span>'+
+      '</div>'+
+    '</article>';
+  }
+
+  function feedView(){
+    var chips = [{id:'all',label:'All',color:'var(--fg)'}].concat(Object.keys(CH).map(function(k){return {id:k,label:CH[k].label,color:CH[k].color};}));
+    var list = S.posts.filter(function(p){ return S.channel==='all' || p.ch===S.channel; });
+    list.sort(S.sort==='hot' ? function(a,b){return score(b)-score(a);} : function(a,b){return b.ts-a.ts;});
+    return '<div class="view">'+
+      '<header class="top band">'+
+        '<div class="row"><div class="brand"><h1>ross<span>rants</span></h1><p>Anonymous · BBA students only</p></div>'+
+          '<div class="seg" role="group" aria-label="Sort">'+
+            '<button type="button" data-act="sort" data-v="hot" aria-pressed="'+(S.sort==='hot')+'">Hot</button>'+
+            '<button type="button" data-act="sort" data-v="new" aria-pressed="'+(S.sort==='new')+'">New</button>'+
+          '</div></div>'+
+        '<nav class="chips" aria-label="Channels">'+chips.map(function(c){
+          return '<button type="button" class="chip" data-act="channel" data-v="'+c.id+'" aria-pressed="'+(S.channel===c.id)+'"><span class="dot" style="background:'+c.color+'"></span>'+c.label+'</button>';
+        }).join('')+'</nav>'+
+      '</header>'+
+      '<main class="feed band" id="scroller">'+(list.length?list.map(postCard).join(''):'<div class="empty">Nothing here yet. Be the first to rant.</div>')+'</main>'+
+      '<button type="button" class="fab" data-act="compose">'+I.plus+'Rant</button>'+
+    '</div>';
+  }
+
+  function threadView(){
+    var p = S.posts.find(function(x){return x.id===S.openId;}) || S.posts[0];
+    var v = S.votes[p.id]||0;
+    var rs = S.replies[p.id]||[];
+    return '<div class="view">'+
+      '<header class="thread">'+
+        '<button type="button" class="back" aria-label="Back to feed" data-act="back">'+I.back+'</button>'+
+        '<span class="t">Thread</span>'+
+        '<span class="tag" style="color:'+CH[p.ch].color+';margin-right:max(12px, env(safe-area-inset-right, 0px))">'+CH[p.ch].label+'</span>'+
+      '</header>'+
+      '<main class="thread band" id="scroller">'+
+        '<section class="op"><div class="meta"><span class="av" style="background:'+AV[p.av]+'"></span><span class="who">'+esc(p.handle)+'</span><span>· '+ago(p.ts)+'</span>'+
+          '<span class="pts score '+(v===1?'up':'')+'">'+score(p)+' pts</span></div>'+
+          '<p>'+esc(p.text)+'</p></section>'+
+        '<div class="label">'+replyLabel(p.id)+'</div>'+
+        (rs.length?rs.map(function(r){
+          return '<div class="reply"><span class="av" style="background:'+AV[r.av]+'"></span><div style="min-width:0">'+
+            '<div class="meta"><span class="who">'+esc(r.handle)+'</span><span>· '+ago(r.ts)+'</span></div>'+
+            '<p>'+esc(r.text)+'</p></div></div>';
+        }).join(''):'<div class="empty" style="text-align:left;padding:12px 4px">No replies yet. Be the first to say “same.”</div>')+
+      '</main>'+
+      '<form class="replybar band" data-form="reply">'+
+        '<label for="reply-input" class="sr">Reply anonymously</label>'+
+        '<input id="reply-input" class="field" autocomplete="off" maxlength="200" placeholder="Reply anonymously…" value="'+esc(S.replyDraft)+'">'+
+        '<button type="submit" class="send" aria-label="Send reply">'+I.send+'</button>'+
+      '</form>'+
+    '</div>';
+  }
+
+  function sheet(){
+    return '<div class="sheet">'+
+      '<button type="button" class="scrim" aria-label="Close composer" data-act="close"></button>'+
+      '<form class="band" data-form="rant" aria-label="New rant">'+
+        '<div class="grab" aria-hidden="true"></div>'+
+        '<div class="row"><h2>Let it out</h2><button type="button" class="ghost" data-act="close">Cancel</button></div>'+
+        '<fieldset><legend>Post to</legend>'+Object.keys(CH).map(function(k){
+          var on = S.draftChannel===k;
+          return '<button type="button" class="pick" data-act="pick" data-v="'+k+'" aria-pressed="'+on+'" style="'+(on?'background:'+CH[k].color+';border-color:'+CH[k].color+';color:var(--on-accent)':'')+'">'+CH[k].label+'</button>';
+        }).join('')+'</fieldset>'+
+        '<label class="lbl" for="rant-input">Your rant</label>'+
+        '<textarea id="rant-input" rows="5" maxlength="280" placeholder="Coffee chat went sideways? Superday nerves? FIN 302 problem set from hell? No names, no judgment.">'+esc(S.draft)+'</textarea>'+
+        '<div class="row"><span class="hint"><span id="count">'+S.draft.length+'</span>/280 · Posts are anonymous. Don’t name people.</span>'+
+          '<button type="submit" class="post-btn" id="post-btn"'+(S.draft.trim()?'':' disabled')+'>Post</button></div>'+
+      '</form>'+
+    '</div>';
+  }
+
+  function render(opts){
+    var sc = document.getElementById('scroller');
+    var keep = sc && !(opts && opts.top) ? sc.scrollTop : 0;
+    app.innerHTML = (S.view==='thread' ? threadView() : feedView()) + (S.composing ? sheet() : '');
+    var nsc = document.getElementById('scroller');
+    if (nsc) nsc.scrollTop = (opts && opts.bottom) ? nsc.scrollHeight : keep;
+    if (opts && opts.focus){ var el = document.getElementById(opts.focus); if (el){ el.focus(); if (el.setSelectionRange) el.setSelectionRange(el.value.length, el.value.length); } }
+  }
+
+  app.addEventListener('click', function(e){
+    var b = e.target.closest('[data-act]'); if (!b) return;
+    var act = b.getAttribute('data-act'), id = +b.getAttribute('data-id'), v = b.getAttribute('data-v');
+    if (act==='up'){
+      S.votes[id] = (S.votes[id]||0)===1 ? 0 : 1; render();
+    } else if (act==='sort'){ S.sort=v; render({top:true}); }
+    else if (act==='channel'){ S.channel=v; render({top:true}); }
+    else if (act==='open'){ S.openId=id; S.view='thread'; S.replyDraft=''; render({top:true}); }
+    else if (act==='back'){ S.view='feed'; render({top:true}); }
+    else if (act==='compose'){ S.composing=true; render({focus:'rant-input'}); }
+    else if (act==='close'){ S.composing=false; render(); }
+    else if (act==='pick'){ S.draftChannel=v; render({focus:'rant-input'}); }
+  });
+
+  app.addEventListener('input', function(e){
+    if (e.target.id==='rant-input'){
+      S.draft = e.target.value.slice(0,280);
+      document.getElementById('count').textContent = S.draft.length;
+      document.getElementById('post-btn').disabled = !S.draft.trim();
+    } else if (e.target.id==='reply-input'){ S.replyDraft = e.target.value; }
+  });
+
+  app.addEventListener('keydown', function(e){
+    if (e.key==='Escape' && S.composing){ S.composing=false; render(); }
+  });
+
+  app.addEventListener('submit', function(e){
+    e.preventDefault();
+    var f = e.target.getAttribute('data-form');
+    if (f==='rant'){
+      var t = S.draft.trim(); if (!t) return;
+      S.posts.unshift({id:S.nextId++, ch:S.draftChannel, handle:'You (anon)', av:4, text:t, score:1, ts:Date.now()});
+      S.draft=''; S.composing=false; S.sort='new'; S.channel='all'; S.view='feed';
+      render({top:true});
+    } else if (f==='reply'){
+      var r = S.replyDraft.trim(); if (!r) return;
+      (S.replies[S.openId] = S.replies[S.openId] || []).push({handle:'You (anon)', av:4, text:r, ts:Date.now()});
+      S.replyDraft='';
+      render({bottom:true, focus:'reply-input'});
+    }
+  });
+
+  document.getElementById('reset').addEventListener('click', function(){ S = seed(); render({top:true}); });
+
+  // Scale the phone to fit the window on desktop / projector
+  var fit = document.getElementById('fit'), device = document.getElementById('device');
+  function size(){
+    if (window.innerWidth <= 520){ device.style.transform=''; fit.style.width=''; fit.style.height=''; return; }
+    var s = Math.min(1.15, (window.innerHeight - 100) / 868, (window.innerWidth - 32) / 414);
+    s = Math.max(s, 0.4);
+    device.style.transform = 'scale('+s+')';
+    fit.style.width = (414*s)+'px'; fit.style.height = (868*s)+'px';
+  }
+  window.addEventListener('resize', size);
+  size();
+  render();
+  setInterval(function(){ if (!S.composing && !(document.activeElement && document.activeElement.id==='reply-input')) render(); }, 60000);
+})();
+</script>
